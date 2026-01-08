@@ -1,0 +1,56 @@
+name: Claude Limit Reset Reminder
+
+  on:
+    schedule:
+      - cron: '0 22 * * *'
+      - cron: '0 3 * * *'
+      - cron: '0 8 * * *'
+      - cron: '0 13 * * *'
+      - cron: '0 18 * * *'
+    workflow_dispatch:
+
+  jobs:
+    send-reminder:
+      runs-on: ubuntu-latest
+      steps:
+        - name: Get Time (IST)
+          id: time
+          run: |
+            echo "ist_time=$(TZ='Asia/Kolkata' date '+%d %b %Y • %I:%M %p IST')" >> $GITHUB_OUTPUT
+            HOUR=$(TZ='Asia/Kolkata' date '+%H')
+            NEXT=$(( (HOUR + 5) % 24 ))
+            if [ $NEXT -lt 12 ]; then
+              [ $NEXT -eq 0 ] && NEXT=12
+              echo "next_reset=${NEXT}:30 AM IST" >> $GITHUB_OUTPUT
+            else
+              [ $NEXT -gt 12 ] && NEXT=$((NEXT - 12))
+              echo "next_reset=${NEXT}:30 PM IST" >> $GITHUB_OUTPUT
+            fi
+
+        - name: Send Email
+          uses: dawidd6/action-send-mail@v3
+          with:
+            server_address: smtp.gmail.com
+            server_port: 587
+            username: ${{ secrets.SMTP_USER }}
+            password: ${{ secrets.SMTP_PASSWORD }}
+            subject: "🔔 Claude Reset - ${{ steps.time.outputs.ist_time }}"
+            to: ramchander@campx.in
+            from: Claude Bot <${{ secrets.SMTP_USER }}>
+            body: |
+              🔔 CLAUDE LIMIT RESET
+
+              📅 ${{ steps.time.outputs.ist_time }}
+
+              Your 5-hour Claude Max limit has reset!
+
+              ⏱️ STATUS
+              ✅ Ready to use
+              ⏰ Next Reset: ${{ steps.time.outputs.next_reset }}
+
+              🚀 Open Claude Code now!
+
+              🔔 Schedule (IST)
+              03:30 AM • 08:30 AM • 01:30 PM • 06:30 PM • 11:30 PM
+
+              — Claude Reminder Bot
