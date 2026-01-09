@@ -2,11 +2,11 @@ name: Claude Limit Reset Reminder
 
 on:
   schedule:
-    - cron: '0 22 * * *'
-    - cron: '0 3 * * *'
-    - cron: '0 8 * * *'
-    - cron: '0 13 * * *'
-    - cron: '0 18 * * *'
+      - cron: '0 20 * * *'
+      - cron: '0 1 * * *'
+      - cron: '0 5 * * *'
+      - cron: '0 10 * * *'
+      - cron: '0 15 * * *'
   workflow_dispatch:
 
 jobs:
@@ -46,4 +46,4 @@ jobs:
             Open Claude Code now!
 
             Schedule IST:
-            03:30 AM, 08:30 AM, 01:30 PM, 06:30 PM, 11:30 PM
+            01:30 AM, 06:30 AM, 10:30 AM, 03:30 PM, 08:30 PM
